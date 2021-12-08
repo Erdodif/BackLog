@@ -1,0 +1,20 @@
+{
+    "name": "hu/petrik",
+    "type": "project",
+    "require": {
+        "slim/slim": "^4.8",
+        "slim/psr7": "^1.4",
+        "illuminate/database": "^7.30"
+    },
+    "autoload": {
+        "psr-4": {
+            "Hu\\Petrik\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "Philip G. Woods",
+            "email": "erdodif@gmail.com"
+        }
+    ]
+}
