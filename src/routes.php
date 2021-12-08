@@ -1,10 +1,11 @@
 <?php
 
+use Hu\Petrik\Middlewares\AuthMiddleware;
 use Hu\Petrik\Token;
 use Hu\Petrik\User;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\RequestInterface as Request;
-//use Slim\Routing\RouteCollectorProxy;
+use Slim\Routing\RouteCollectorProxy as Group;
 use Slim\App;
 
 define("RESPONSE_OK", 200);
@@ -41,4 +42,10 @@ return function (App $app) {
         $res->getBody()->write(json_encode(["email"=>$email, "token"=>$token->token]));
         return $res->withHeader('Content-Type','application/json')->withStatus(RESPONSE_OK);
     });
+    $app->group("/api",function (Group $group){
+        $group->get("/hello", function (Request $req, Response $res) {
+            $res->getBody()->write('{"hello":"world"}');
+            return $res->withHeader("Content-Type","application/json")->withStatus(RESPONSE_OK);
+        });
+    })->add(new AuthMiddleware());
 };
