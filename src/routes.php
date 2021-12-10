@@ -1,5 +1,6 @@
 <?php
 
+use Hu\Petrik\Middlewares\AdminMiddleware;
 use Hu\Petrik\Middlewares\AuthMiddleware;
 use Hu\Petrik\Token;
 use Hu\Petrik\User;
@@ -47,5 +48,32 @@ return function (App $app) {
             $res->getBody()->write('{"hello":"world"}');
             return $res->withHeader("Content-Type","application/json")->withStatus(RESPONSE_OK);
         });
-    })->add(new AuthMiddleware());
+        $group->get("/admin",function(Request $req, Response $res){
+            $res->getBody()->write('{"hello":"admin"}');
+            return $res->withHeader("Content-Type","application/json")->withStatus(RESPONSE_OK);
+        })->add(new AdminMiddleware($group->getResponseFactory()));
+    })->add(new AuthMiddleware($app->getResponseFactory()));
 };
+/*
+Feladat:
+* A users táblát egészítsd egy admin BOOL (nem null) mezővel.
+* Az /api alatti végpontokat csak bejelentkezés után, _admin_ jogosultággal lehessen meghívni.
+  Ha normál user szeretné meghívni, akkor kapjon 403-as hibakódot!
+    -> Ezt a middleware generálja!
+* Készíts egy /api/deleteuser/{userid} végpontot, amelyre DELETE kérést küldve törli az adott ID-jű usert
+  Admint ne lehessen törölni!
+  Eredményként nincs kimenetünk (204-es státusz kód).
+* Készíts egy /api/setadmin/{userid} végpontot, amelyre POST kérést küldhetünk. A kérés body-ja:
+  { "admin": <bool> }, amely beállítja, hogy az adott user admin legyen, vagy sem.
+  Az utolsó admintól ne lehessen elvenni az admin jogot!
+  Eredményként listázzuk ki a user új adatait.
+* Készíts egy /users végpontot, ami listázza az usereket. A kimenet az alábbi struktúrájú legyen:
+  {
+    "data": [
+      { "id": 1, "email": "email@example.com", "admin": true },
+      { "id": 2, "email": "normaluser@example.com", "admin": false }	  
+    ]
+  }
+  Vagyis a data változó a userek listáját tartalmazza.
+  A kimeneten ne szerepljen a jelszó, a created_at és az updated_at mezők tartalma!
+*/
